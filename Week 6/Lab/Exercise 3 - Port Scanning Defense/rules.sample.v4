@@ -1,0 +1,32 @@
+# SAMPLE MAC ONLY: 02:00:00:00:01:12 belongs to the isolated demo.
+# Regenerate using the real Windows VM MAC before applying to the course gateway.
+# Generated IPv4 lab filter table; replaces existing filter rules.
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:W6_SCAN_GUARD - [0:0]
+:W6_SCAN_TRACK - [0:0]
+:W6_SCAN_BAN - [0:0]
+:W6_PING - [0:0]
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate INVALID -j DROP
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -m conntrack --ctstate INVALID -j DROP
+-A FORWARD -i eth0 ! -s 192.168.1.0/24 -j DROP
+-A FORWARD -i eth1 ! -s 192.168.2.0/24 -j DROP
+-A FORWARD -i eth0 -o eth1 -s 192.168.1.0/24 -d 192.168.2.0/24 -j W6_SCAN_GUARD
+-A W6_SCAN_GUARD -m recent --name W6_BANNED --update --seconds 300 --rsource -j DROP
+-A W6_SCAN_GUARD -p tcp --syn -m conntrack --ctstate NEW -j W6_SCAN_TRACK
+-A W6_SCAN_GUARD -j RETURN
+-A W6_SCAN_TRACK -m recent --name W6_ATTEMPTS --set --rsource
+-A W6_SCAN_TRACK -m recent --name W6_ATTEMPTS --rcheck --seconds 60 --hitcount 11 --rsource -j W6_SCAN_BAN
+-A W6_SCAN_TRACK -j RETURN
+-A W6_SCAN_BAN -m recent --name W6_BANNED --set --rsource -j DROP
+-A FORWARD -i eth0 -o eth1 -s 192.168.1.0/24 -d 192.168.2.0/24 -p icmp --icmp-type echo-request -j W6_PING
+-A W6_PING -m hashlimit --hashlimit-upto 1/second --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name w6_ping --hashlimit-htable-expire 60000 -j ACCEPT
+-A W6_PING -j DROP
+-A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -i eth1 -o eth0 -s 192.168.2.0/24 -d 192.168.1.0/24 -m conntrack --ctstate NEW -j ACCEPT
+-A FORWARD -i eth0 -o eth1 -s 192.168.1.12 -d 192.168.2.10 -p tcp --syn --dport 23 -m mac --mac-source 02:00:00:00:01:12 -m conntrack --ctstate NEW -j ACCEPT
+COMMIT

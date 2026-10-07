@@ -1,0 +1,15 @@
+:W6_SCAN_GUARD - [0:0]
+:W6_SCAN_TRACK - [0:0]
+:W6_SCAN_BAN - [0:0]
+# The ban applies to all externally initiated traffic toward the inside LAN.
+-A FORWARD -i $OUTSIDE -o $INSIDE -s $OUTSIDE_NET -d $INSIDE_NET -j W6_SCAN_GUARD
+# Sliding ban: matching traffic refreshes the 300-second inactivity interval.
+-A W6_SCAN_GUARD -m recent --name W6_BANNED --update --seconds 300 --rsource -j DROP
+-A W6_SCAN_GUARD -p tcp --syn -m conntrack --ctstate NEW -j W6_SCAN_TRACK
+-A W6_SCAN_GUARD -j RETURN
+# A rule without a target records the SYN, then continues to the threshold check.
+-A W6_SCAN_TRACK -m recent --name W6_ATTEMPTS --set --rsource
+# First 10 new SYN packets per 60 seconds do not trigger a ban; the 11th does.
+-A W6_SCAN_TRACK -m recent --name W6_ATTEMPTS --rcheck --seconds 60 --hitcount 11 --rsource -j W6_SCAN_BAN
+-A W6_SCAN_TRACK -j RETURN
+-A W6_SCAN_BAN -m recent --name W6_BANNED --set --rsource -j DROP
