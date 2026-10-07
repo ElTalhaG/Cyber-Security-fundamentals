@@ -2,6 +2,16 @@
 
 A Java RMI mock print server that authenticates every remote operation, supports expiring sessions, and records print jobs without contacting a physical printer. The example uses a protected local credential file containing salted PBKDF2 password hashes, role checks for administrative operations, and TLS-protected RMI.
 
+## Exercise folders
+
+These folder numbers are study groups for the tasks in the handout, which does not number its authentication sections.
+
+- `Exercise 1 - RMI Print Server/`: the remote interface, client, server startup, and mock print operations. Session management is integrated into `PrintServerImpl.java`.
+- `Exercise 2 - Passwords and Authentication/`: credential storage, password verification, account creation, and authentication errors.
+- `Exercise 3 - Secure Transport/`: TLS settings and the RMI client socket factory.
+
+All folders form one application and retain the Java package `lab.auth`. `build.sh` compiles them together into `out/`; run the commands below from this project directory.
+
 ## Requirements
 
 - Java 11 or later (`java`, `javac`, and `keytool`).
@@ -12,8 +22,7 @@ A Java RMI mock print server that authenticates every remote operation, supports
 From this directory:
 
 ```sh
-mkdir -p out
-javac -d out src/lab/auth/*.java
+./build.sh
 ```
 
 ## Create a TLS key and trust store
