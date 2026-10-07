@@ -2,13 +2,24 @@
 
 This project extends the Week 4 Java RMI mock print server with two interchangeable, externally loaded authorization policies: a per-user ACL and role-based access control (RBAC). Password login, protected credential-file handling, TLS RMI, session tokens, session expiry, mock print operations, and audit logging are retained from Week 4.
 
+## Exercise folders
+
+The folders follow the handout's progression. The handout repeats “third task” for the organizational change; it is labeled Exercise 4 here for navigation.
+
+- `Exercise 1 - Authentication/`: Part I password storage, verification, account creation, and TLS transport. Session handling remains integrated into the shared server implementation.
+- `Exercise 2 - Access Control List/`: Part II Task 1, `AccessPolicy.java`, `AclPolicy.java`, and the initial ACL file.
+- `Exercise 3 - Role-Based Access Control/`: Part II Tasks 2 and 3, `RbacPolicy.java` and the initial role assignments, permissions, and hierarchy.
+- `Exercise 4 - Company Reorganization/`: the updated ACL and RBAC policy files.
+- `Shared - RMI Print Server/`: the interface, client, startup, and print-server implementation used by both access-control exercises.
+
+All folders form one application and retain the Java package `lab.auth`. `build.sh` compiles them together into `out/`; run the commands below from this project directory. Shared policy-parsing helpers remain in `AclPolicy.java` and are also used by RBAC.
+
 ## Requirements and build
 
 Use Java 11 or later (`java`, `javac`, and `keytool`). From this directory:
 
 ```sh
-mkdir -p out
-javac -d out src/lab/auth/*.java
+./build.sh
 ```
 
 ## Prepare local TLS
@@ -52,16 +63,16 @@ Set the keystore environment variables in the server terminal and choose an exte
 export PRINTSERVER_KEYSTORE="$PWD/data/server-keystore.p12"
 read -s PRINTSERVER_KEYSTORE_PASSWORD
 export PRINTSERVER_KEYSTORE_PASSWORD
-java -cp out lab.auth.PrintServerMain data/users.txt acl policy/acl-initial.properties
+java -cp out lab.auth.PrintServerMain data/users.txt acl "Exercise 2 - Access Control List/acl-initial.properties"
 ```
 
 For RBAC, stop the first server and run:
 
 ```sh
-java -cp out lab.auth.PrintServerMain data/users.txt rbac policy/rbac-initial.properties
+java -cp out lab.auth.PrintServerMain data/users.txt rbac "Exercise 3 - Role-Based Access Control/rbac-initial.properties"
 ```
 
-For the new organization, use `policy/acl-reorganization.properties` or `policy/rbac-reorganization.properties`. The policy mode and selected file are shown in the server startup message. Policy files are loaded at startup; restart after changing a file.
+For the new organization, use `Exercise 4 - Company Reorganization/acl-reorganization.properties` or `Exercise 4 - Company Reorganization/rbac-reorganization.properties`. The policy mode and selected file are shown in the server startup message. Policy files are loaded at startup; restart after changing a file.
 
 In another terminal, set the client trust store and connect:
 
@@ -82,8 +93,8 @@ RBAC files use `user.<username>=<role>[,<role>...]`, `role.<role>=<operation>[,.
 
 ## Files
 
-- `policy/acl-initial.properties` and `policy/rbac-initial.properties` implement the original roster.
-- `policy/acl-reorganization.properties` and `policy/rbac-reorganization.properties` capture Bob's departure, George's promotion to service technician, and the additions of Henry and Ida.
-- `src/lab/auth/AccessPolicy.java` loads and enforces both policy abstractions.
+- `Exercise 2 - Access Control List/acl-initial.properties` and `Exercise 3 - Role-Based Access Control/rbac-initial.properties` implement the original roster.
+- `Exercise 4 - Company Reorganization/acl-reorganization.properties` and `Exercise 4 - Company Reorganization/rbac-reorganization.properties` capture Bob's departure, George's promotion to service technician, and the additions of Henry and Ida.
+- `Exercise 2 - Access Control List/AccessPolicy.java` loads and enforces both policy abstractions.
 
 The server remains a teaching mock: queues and configuration are in memory, no real printer is used, and no named file is opened. It does not implement account lockout, password reset, persistent audit storage, or production RMI deserialization hardening.
