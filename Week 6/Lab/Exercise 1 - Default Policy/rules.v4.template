@@ -1,0 +1,5 @@
+# Cumulative baseline: internal clients may initiate connections outside.
+-A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+-A FORWARD -i $INSIDE -o $OUTSIDE -s $INSIDE_NET -d $OUTSIDE_NET -m conntrack --ctstate NEW -j ACCEPT
+# New Telnet sessions must come from the Windows IP AND its Ethernet MAC.
+-A FORWARD -i $OUTSIDE -o $INSIDE -s $WINDOWS_IP -d $SERVER_IP -p tcp --syn --dport 23 -m mac --mac-source $WINDOWS_MAC -m conntrack --ctstate NEW -j ACCEPT
