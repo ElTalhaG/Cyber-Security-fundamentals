@@ -16,7 +16,7 @@ public final class PrintServerMain {
         Path usersFile = Path.of(args.length > 0 ? args[0] : "data/users.txt");
         String mode = args.length > 1 ? args[1] : "acl";
         String defaultPolicy = "rbac".equalsIgnoreCase(mode)
-                ? "policy/rbac-initial.properties" : "policy/acl-initial.properties";
+                ? "Exercise 3 - Role-Based Access Control/rbac-initial.properties" : "Exercise 2 - Access Control List/acl-initial.properties";
         Path policyFile = Path.of(args.length > 2 ? args[2] : defaultPolicy);
         int registryPort = args.length > 3 ? Integer.parseInt(args[3]) : 1099;
         int servicePort = args.length > 4 ? Integer.parseInt(args[4]) : 1100;
