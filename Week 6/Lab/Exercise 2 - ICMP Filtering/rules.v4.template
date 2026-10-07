@@ -1,0 +1,7 @@
+:W6_PING - [0:0]
+# Inspect every external echo request, even one marked ESTABLISHED by conntrack.
+-A FORWARD -i $OUTSIDE -o $INSIDE -s $OUTSIDE_NET -d $INSIDE_NET -p icmp --icmp-type echo-request -j W6_PING
+# Independent token bucket per source: average 1 packet/second, initial burst 5.
+-A W6_PING -m hashlimit --hashlimit-upto 1/second --hashlimit-burst 5 --hashlimit-mode srcip --hashlimit-name w6_ping --hashlimit-htable-expire 60000 -j ACCEPT
+# Explicit DROP prevents a later established-flow rule from accepting excess pings.
+-A W6_PING -j DROP
