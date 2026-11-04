@@ -1,6 +1,6 @@
 # Week 8-9 Protocol Security Lab
 
-The supplied handout covers a formal protocol-repair exercise and an implementation exercise. The answer and model for the first exercise are available now; the Lowe-fixed Needham-Schroeder implementation is organized separately as Exercise 2.
+The supplied handout covers a formal protocol-repair exercise and an implementation exercise. Both are organized below by exercise.
 
 ## Exercise 1 - Init Protocol
 
@@ -15,6 +15,13 @@ From this folder, check the repaired model on macOS with:
 ```
 
 The other starter models are [`nspk.AnB`](nspk.AnB), [`nsl.AnB`](nsl.AnB), and [`password.AnB`](password.AnB). The handout labels the password and better-NSL discussion as Week 9.
+
+## Exercise 2 - Implementing NSL
+
+- [Implementation guide and run instructions](Exercise%202%20-%20Implement%20NSL/README.md)
+- [Runnable Alice and Bob roles](Exercise%202%20-%20Implement%20NSL/src/main/java/lab/protocol/nsl/)
+
+Run `./run.sh` in that folder to generate RSA keys, pass each encrypted message to the other role, and confirm the nonce checks succeed.
 
 ## Tool
 
