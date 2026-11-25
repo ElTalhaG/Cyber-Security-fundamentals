@@ -1,1 +1,9 @@
 .DS_Store
+
+# Local IDE project metadata
+.idea/
+*.iml
+
+# Generated Haskell compiler output
+*.hi
+*.o
